@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import LiveFeed from "../views/LiveFeed.vue";
-import Login from "../views/Login.vue";
+import Login from "../views/UserLogin.vue";
 
 const routes = [
   {
@@ -10,7 +10,7 @@ const routes = [
     component: Login,
   },
   {
-    path: "/home",
+    path: "/liveFeed",
     name: "LiveFeed",
     component: LiveFeed,
   },
