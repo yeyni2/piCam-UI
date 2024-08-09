@@ -1,45 +1,104 @@
 <template>
   <div
-    id="login-page"
     class="d-flex flex-column justify-center align-center"
     style="height: 100vh"
   >
-    <h1 class="ma-4">Login</h1>
-    <v-text-feild>Email</v-text-feild>
-    <v-text-feild>Password</v-text-feild>
+    <div class="page">
+      <h3>Enter Your PiCam User Credential</h3>
+      <v-form class="form">
+        <v-text-field v-model="email" label="Email" type="email"></v-text-field>
+        <v-text-field
+          v-model="password"
+          label="Password"
+          :type="showPassword ? 'text' : 'password'"
+          :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          @click:append-inner="togglePasswordVisibility"
+        ></v-text-field>
+        <v-btn @click="login">Login</v-btn>
+      </v-form>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { auth, messaging } from "../JS/firebaseConfig.js";
-import { onMounted, ref } from "vue";
+import { getToken } from "firebase/messaging";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "vue-router";
+import { ref } from "vue";
 
 const router = useRouter();
 
-const email = ref();
-const password = ref();
+const email = ref("liranyeyni1620@gmail.com");
+const password = ref("lioks1234");
+
+const showPassword = ref(false);
 
 const login = async () => {
-  await auth
-    .signInWithEmailAndPassword(email.value, password.value)
-    .then((shit) => {
-      console.log("shit ", shit);
-    });
-  const token = await messaging.getToken();
-  console.log(token);
-  // TODO: Send the token to the server. If the user doesn't exist as a key return an error and dont nav to the next page...
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email.value,
+      password.value
+    );
+    const user = userCredential.user;
+    requestToken(user);
+  } catch (error) {
+    console.error(error.message);
+    alert("Login faild");
+  }
 };
 
-onMounted(() => {
-  auth.onAuthStateChanged(() => {
-    router.push("/liveFeed");
-  });
-});
+const requestToken = async (user) => {
+  if (Notification.permission != "granted") {
+    await Notification.requestPermission();
+  }
+  if (Notification.permission != "granted") return;
+
+  getToken(messaging, {
+    vapidKey:
+      "BCuf1gfQ26ONFqnapY-pXl9khG63_3C_JOdUvC-zFekSAhtmNV6erEY4K3B3725Z48Ch4qr-fv5D8S3xnXlaERs",
+  })
+    .then((currentToken) => {
+      if (currentToken) {
+        console.log(currentToken);
+        fetch("/set_token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token: currentToken,
+            uesrId: user.uid,
+          }),
+        });
+        router.push("/liveFeed");
+      } else {
+        console.log(
+          "No registration token available. Request permission to generate one."
+        );
+      }
+    })
+    .catch((err) => {
+      console.error("An error occurred while retrieving token. ", err);
+    });
+};
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
+};
 </script>
 
 <style>
-#login-page {
-  scale: 1.4;
+.page {
+  width: 350px;
+  margin: auto;
+  scale: 1.5;
+}
+
+.form {
+  width: 250px;
+  margin: auto;
+  margin-top: 2rem;
 }
 </style>

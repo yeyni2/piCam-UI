@@ -1,23 +1,22 @@
 <template>
   <div>
     <h1>Home Cam Live Feed!</h1>
-    <!-- TODO: create an image with href as in the python server -->
+    <v-btn @click="userSignOut">sign out</v-btn>
+    <img :src="getSrc" width="640" height="480" />
   </div>
 </template>
 
 <script setup>
-import { auth } from "../JS/firebaseConfig.js";
-import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { auth } from "../JS/firebaseConfig";
+import { signOut } from "firebase/auth";
 
-const router = useRouter();
+const userSignOut = () => {
+  signOut(auth);
+};
 
-// TODO: get users home cam ip from the server, then make the live feed from that ip.
-
+const getSrc = () => {
+  return `/video_feed?user_id=${auth.currentUser.uid}`;
+};
 </script>
 
-<style>
-#login-page {
-  scale: 1.4;
-}
-</style>
+<style></style>
