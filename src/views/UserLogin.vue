@@ -59,17 +59,17 @@ const requestToken = async (user) => {
     vapidKey:
       "BCuf1gfQ26ONFqnapY-pXl9khG63_3C_JOdUvC-zFekSAhtmNV6erEY4K3B3725Z48Ch4qr-fv5D8S3xnXlaERs",
   })
-    .then((currentToken) => {
+    .then(async (currentToken) => {
       if (currentToken) {
         console.log(currentToken);
-        fetch("/set_token", {
+        await fetch("/api/set_token", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             token: currentToken,
-            uesrId: user.uid,
+            userId: user.uid,
           }),
         });
 
