@@ -72,6 +72,7 @@ const requestToken = async (user) => {
             uesrId: user.uid,
           }),
         });
+
         router.push("/liveFeed");
       } else {
         console.log(

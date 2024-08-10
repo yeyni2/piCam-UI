@@ -1,6 +1,6 @@
-importScripts("https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js");
+importScripts("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
 importScripts(
-  "https://www.gstatic.com/firebasejs/9.10.0/firebase-messaging.js"
+  "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"
 );
 
 const firebaseConfig = {
@@ -17,13 +17,12 @@ firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage(function (payload) {
-  console.log("Received background message ", payload);
-
+messaging.onBackgroundMessage((payload) => {
+  console.log("got it");
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    // icon: "/firebase-logo.png",
+    icon: "/firebase-logo.png",
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
