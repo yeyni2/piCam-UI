@@ -20,6 +20,11 @@ const vuetify = createVuetify({
 
 createApp(App).use(store).use(router).use(vuetify).mount("#app");
 
-navigator.serviceWorker.register("/firebase-messaging-sw.js").catch((err) => {
-  console.error("Service worker registration failed:", err);
-});
+navigator.serviceWorker
+  .register("/firebase-messaging-sw.js")
+  .then(() => {
+    console.log("Registerd service worker");
+  })
+  .catch((err) => {
+    console.error("Service worker registration failed:", err);
+  });

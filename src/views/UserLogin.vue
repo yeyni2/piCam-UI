@@ -29,8 +29,8 @@ import { ref } from "vue";
 
 const router = useRouter();
 
-const email = ref("liranyeyni1620@gmail.com");
-const password = ref("lioks1234");
+const email = ref("");
+const password = ref("");
 
 const showPassword = ref(false);
 
@@ -61,7 +61,6 @@ const requestToken = async (user) => {
   })
     .then(async (currentToken) => {
       if (currentToken) {
-        console.log(currentToken);
         await fetch("/api/set_token", {
           method: "POST",
           headers: {
@@ -72,7 +71,6 @@ const requestToken = async (user) => {
             userId: user.uid,
           }),
         });
-
         router.push("/liveFeed");
       } else {
         console.log(

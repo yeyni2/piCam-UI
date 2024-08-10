@@ -1,8 +1,10 @@
 <template>
-  <div>
-    <h1>Home Cam Live Feed!</h1>
-    <v-btn @click="userSignOut">sign out</v-btn>
-    <img :src="videoUrl" width="640" height="480" />
+  <div class="live-feed-page">
+    <h1 class="pa-3">Home Cam Live Feed!</h1>
+    <div class="ma-6 mb-9">
+      <v-btn @click="userSignOut">sign out</v-btn>
+    </div>
+    <img :src="videoUrl" />
   </div>
 </template>
 
@@ -15,6 +17,7 @@ const videoUrl = ref("");
 
 const userSignOut = () => {
   signOut(auth);
+  window.location.reload();
 };
 
 const getSrc = () => {
@@ -24,4 +27,10 @@ const getSrc = () => {
 getSrc();
 </script>
 
-<style></style>
+<style>
+.live-feed-page {
+  margin: auto;
+  width: 80%;
+  max-width: 1000px;
+}
+</style>
