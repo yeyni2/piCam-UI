@@ -4,7 +4,7 @@
     <div class="ma-6 mb-9">
       <v-btn @click="userSignOut">sign out</v-btn>
     </div>
-    <img :src="videoUrl" />
+    <img style="width: -webkit-fill-available" :src="videoUrl" />
   </div>
 </template>
 
@@ -32,5 +32,12 @@ getSrc();
   margin: auto;
   width: 80%;
   max-width: 1000px;
+}
+
+@media (max-width: 999px) {
+  .live-feed-page {
+    width: 70%;
+    max-width: 700px;
+  }
 }
 </style>

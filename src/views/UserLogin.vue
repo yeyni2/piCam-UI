@@ -90,13 +90,15 @@ const togglePasswordVisibility = () => {
 
 <style>
 .page {
-  width: 350px;
+  width: 50%;
+  max-width: 350px;
   margin: auto;
   scale: 1.5;
 }
 
 .form {
-  width: 250px;
+  width: 90%;
+  max-width: 250px;
   margin: auto;
   margin-top: 2rem;
 }
