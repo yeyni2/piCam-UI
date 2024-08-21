@@ -1,4 +1,4 @@
-# picam-ui
+# picam
 
 ## Project setup
 

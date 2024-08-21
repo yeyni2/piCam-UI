@@ -20,8 +20,9 @@ const userSignOut = () => {
   window.location.reload();
 };
 
-const getSrc = () => {
-  videoUrl.value = `/api/video_feed?user_id=${auth.currentUser.uid}`;
+const getSrc = async () => {
+  const userIdToken = await auth.currentUser.getIdToken();
+  videoUrl.value = `/api/video_feed?user_id_token=${userIdToken}`;
 };
 
 getSrc();

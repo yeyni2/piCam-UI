@@ -42,7 +42,8 @@ const login = async () => {
       password.value
     );
     const user = userCredential.user;
-    requestToken(user);
+    await requestToken(user);
+    router.push("/liveFeed");
   } catch (error) {
     console.error(error.message);
     alert("Login faild");
@@ -53,9 +54,14 @@ const requestToken = async (user) => {
   if (Notification.permission != "granted") {
     await Notification.requestPermission();
   }
-  if (Notification.permission != "granted") return;
+  if (Notification.permission != "granted") {
+    alert(
+      "Your notification are blocked, you will not get messages when someone is at the door"
+    );
+    return;
+  }
 
-  getToken(messaging, {
+  await getToken(messaging, {
     vapidKey:
       "BCuf1gfQ26ONFqnapY-pXl9khG63_3C_JOdUvC-zFekSAhtmNV6erEY4K3B3725Z48Ch4qr-fv5D8S3xnXlaERs",
   })
@@ -68,14 +74,11 @@ const requestToken = async (user) => {
           },
           body: JSON.stringify({
             token: currentToken,
-            userId: user.uid,
+            userIdToken: await user.getIdToken(true),
           }),
         });
-        router.push("/liveFeed");
       } else {
-        console.log(
-          "No registration token available. Request permission to generate one."
-        );
+        alert("No registration token available");
       }
     })
     .catch((err) => {
