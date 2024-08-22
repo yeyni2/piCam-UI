@@ -35,22 +35,31 @@ const password = ref("");
 const showPassword = ref(false);
 
 const login = async () => {
+  let user = "";
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email.value,
       password.value
     );
-    const user = userCredential.user;
-    await requestToken(user);
-    router.push("/liveFeed");
+    user = userCredential.user;
   } catch (error) {
     console.error(error.message);
     alert("Login faild");
+    alert(error.message);
+    return;
   }
+  await requestToken(user).catch((error) => {
+    alert(error);
+  });
+  router.push("/liveFeed");
 };
 
 const requestToken = async (user) => {
+  if (!("Notification" in window)) {
+    alert("your browser doesn't support notification");
+    return;
+  }
   if (Notification.permission != "granted") {
     await Notification.requestPermission();
   }
@@ -83,6 +92,7 @@ const requestToken = async (user) => {
     })
     .catch((err) => {
       console.error("An error occurred while retrieving token. ", err);
+      alert("An error occurred while retrieving token. ", err);
     });
 };
 

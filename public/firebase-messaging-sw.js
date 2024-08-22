@@ -2,6 +2,9 @@ importScripts("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
 importScripts(
   "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"
 );
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.1.5/workbox-sw.js');
+
+workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
 
 const firebaseConfig = {
   apiKey: "AIzaSyBByeGSOiAnyZcuyP_jgRgjYoXnzAM-mM4",
@@ -25,6 +28,6 @@ messaging.onBackgroundMessage((payload) => {
   try {
     self.registration.showNotification(notificationTitle, notificationOptions);
   } catch (e) {
-    console.error(e);
+    console.error("message Falied: ", e);
   }
 });
