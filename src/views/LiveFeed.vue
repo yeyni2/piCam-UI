@@ -31,7 +31,7 @@ getSrc();
 <style>
 .live-feed-page {
   margin: auto;
-  width: 80%;
+  width: 90%;
   max-width: 1000px;
 }
 
