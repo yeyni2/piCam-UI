@@ -2,7 +2,9 @@ importScripts("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
 importScripts(
   "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"
 );
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.1.5/workbox-sw.js');
+importScripts(
+  "https://storage.googleapis.com/workbox-cdn/releases/6.1.5/workbox-sw.js"
+);
 
 workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
 
@@ -26,7 +28,7 @@ messaging.onBackgroundMessage((payload) => {
     body: payload.notification.body,
   };
   try {
-    self.registration.showNotification(notificationTitle, notificationOptions);
+    // self.registration.showNotification(notificationTitle, notificationOptions);
   } catch (e) {
     console.error("message Falied: ", e);
   }

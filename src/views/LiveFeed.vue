@@ -11,7 +11,8 @@
 <script setup>
 import { auth } from "../JS/firebaseConfig";
 import { signOut } from "firebase/auth";
-import { ref } from "vue";
+import { io } from "socket.io-client";
+import { onBeforeUnmount, ref } from "vue";
 
 const videoUrl = ref("");
 
@@ -20,12 +21,36 @@ const userSignOut = () => {
   window.location.reload();
 };
 
-const getSrc = async () => {
-  const userIdToken = await auth.currentUser.getIdToken();
-  videoUrl.value = `/api/video_feed?user_id_token=${userIdToken}`;
-};
+// const getSrc = async () => {
+//   const userIdToken = await auth.currentUser.getIdToken();
+//   videoUrl.value = `/api/video_feed?user_id_token=${userIdToken}`;
+// };
 
-getSrc();
+const socket = io();
+
+socket.on("connect", () => {
+  console.log("Connected to server");
+  socket.emit("video_feed");
+});
+
+socket.on("disconnect", () => {
+  console.log("Disconnected from server");
+  socket.disconnect();
+});
+
+socket.on("new_frame", (data) => {
+  videoUrl.value = `data:image/jpeg;base64,${data.frame}`;
+});
+
+socket.on("frame", (data) => {
+  console.log("Immediate frame event received:", data);
+});
+onBeforeUnmount(() => {
+  if (socket) {
+    socket.disconnect();
+  }
+});
+// getSrc();
 </script>
 
 <style>

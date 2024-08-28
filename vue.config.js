@@ -25,7 +25,7 @@ module.exports = defineConfig({
     ],
     workboxPluginMode: "InjectManifest",
     workboxOptions: {
-      swSrc: "./public/firebase-messaging-sw.js", // path to your custom service worker file
+    swSrc: "./public/firebase-messaging-sw.js",
     },
   },
 });
