@@ -1,4 +1,5 @@
 <template>
+  <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script> -->
   <div class="live-feed-page">
     <h1 class="pa-3">Home Cam Live Feed!</h1>
     <div class="ma-6 mb-9">
@@ -21,20 +22,18 @@ const userSignOut = () => {
   window.location.reload();
 };
 
-// const getSrc = async () => {
-//   const userIdToken = await auth.currentUser.getIdToken();
-//   videoUrl.value = `/api/video_feed?user_id_token=${userIdToken}`;
-// };
-
-const socket = io();
+const userIdToken = await auth.currentUser.getIdToken();
+const socket = io("localhost:3000", {
+  query: {
+    userIdToken,
+  },
+});
 
 socket.on("connect", () => {
-  console.log("Connected to server");
   socket.emit("video_feed");
 });
 
 socket.on("disconnect", () => {
-  console.log("Disconnected from server");
   socket.disconnect();
 });
 
@@ -42,15 +41,11 @@ socket.on("new_frame", (data) => {
   videoUrl.value = `data:image/jpeg;base64,${data.frame}`;
 });
 
-socket.on("frame", (data) => {
-  console.log("Immediate frame event received:", data);
-});
 onBeforeUnmount(() => {
   if (socket) {
     socket.disconnect();
   }
 });
-// getSrc();
 </script>
 
 <style>

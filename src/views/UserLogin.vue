@@ -4,17 +4,34 @@
     style="height: 100vh"
   >
     <div class="page">
-      <h3>Enter Your PiCam User Credential</h3>
+      <h3>Enter Your User Credential</h3>
       <v-form class="form">
-        <v-text-field v-model="email" label="Email" type="email"></v-text-field>
+        <v-text-field
+          v-model="email"
+          label="Email"
+          type="email"
+          :rules="[requireRule]"
+        ></v-text-field>
         <v-text-field
           v-model="password"
           label="Password"
           :type="showPassword ? 'text' : 'password'"
           :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
           @click:append-inner="togglePasswordVisibility"
+          :rules="[requireRule, minLengthRule(6)]"
         ></v-text-field>
-        <v-btn @click="login">Login</v-btn>
+        <v-btn @click="login">{{ submitBtnText }}</v-btn>
+
+        <div class="ma-5">
+          <p v-if="signUp">
+            Already have a user?
+            <span class="singup-text" @click="togglePage">Login</span>
+          </p>
+          <p v-else>
+            Don't have a user?
+            <span class="singup-text" @click="togglePage">Singup</span>
+          </p>
+        </div>
       </v-form>
     </div>
   </div>
@@ -23,7 +40,11 @@
 <script setup>
 import { auth, messaging } from "../JS/firebaseConfig.js";
 import { getToken } from "firebase/messaging";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { minLengthRule, requireRule } from "../JS/utils.js";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 
@@ -34,25 +55,54 @@ const password = ref("");
 
 const showPassword = ref(false);
 
+const signUp = ref(false);
+const submitBtnText = ref("Login");
+
 const login = async () => {
   let user = "";
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email.value,
-      password.value
-    );
+    let userCredential = "";
+    if (signUp.value) {
+      userCredential = await register();
+    } else {
+      userCredential = await signInWithEmailAndPassword(
+        auth,
+        email.value,
+        password.value
+      );
+    }
     user = userCredential.user;
   } catch (error) {
     console.error(error.message);
-    alert("Login faild");
     alert(error.message);
     return;
   }
+
   await requestToken(user).catch((error) => {
     alert(error);
   });
+
   router.push("/liveFeed");
+};
+
+const register = async () => {
+  let userCredential = await createUserWithEmailAndPassword(
+    auth,
+    email.value,
+    password.value
+  );
+
+  await fetch("api/add_new_user", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      userIdToken: await userCredential.user.getIdToken(true),
+    }),
+  });
+
+  return userCredential;
 };
 
 const requestToken = async (user) => {
@@ -82,7 +132,7 @@ const requestToken = async (user) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            token: currentToken,
+            messageToken: currentToken,
             userIdToken: await user.getIdToken(true),
           }),
         });
@@ -99,6 +149,15 @@ const requestToken = async (user) => {
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value;
 };
+
+const togglePage = () => {
+  signUp.value = !signUp.value;
+  if (signUp.value) {
+    submitBtnText.value = "Signup";
+  } else {
+    submitBtnText.value = "Login";
+  }
+};
 </script>
 
 <style>
@@ -114,5 +173,14 @@ const togglePasswordVisibility = () => {
   max-width: 250px;
   margin: auto;
   margin-top: 2rem;
+}
+
+.singup-text {
+  color: blue;
+  cursor: pointer;
+}
+
+.singup-text:hover {
+  text-decoration: underline; /* Underline on hover to show it’s clickable */
 }
 </style>

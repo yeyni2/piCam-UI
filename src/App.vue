@@ -1,5 +1,12 @@
 <template>
-  <router-view />
+  <Suspense>
+    <template #default>
+      <router-view />
+    </template>
+    <template #fallback>
+      <div>Loading...</div>
+    </template>
+  </Suspense>
 </template>
 
 <style>
