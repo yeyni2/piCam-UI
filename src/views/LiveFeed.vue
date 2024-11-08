@@ -2,25 +2,16 @@
   <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script> -->
   <div class="live-feed-page">
     <h1 class="pa-3">Home Cam Live Feed!</h1>
-    <div class="ma-6 mb-9">
-      <v-btn @click="userSignOut">sign out</v-btn>
-    </div>
     <img style="width: -webkit-fill-available" :src="videoUrl" />
   </div>
 </template>
 
 <script setup>
 import { auth } from "../JS/firebaseConfig";
-import { signOut } from "firebase/auth";
 import { io } from "socket.io-client";
 import { onBeforeUnmount, ref } from "vue";
 
 const videoUrl = ref("");
-
-const userSignOut = () => {
-  signOut(auth);
-  window.location.reload();
-};
 
 const userIdToken = await auth.currentUser.getIdToken();
 const socket = io("localhost:3000", {

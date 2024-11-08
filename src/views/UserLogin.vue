@@ -77,12 +77,10 @@ const login = async () => {
     alert(error.message);
     return;
   }
-
   await requestToken(user).catch((error) => {
     alert(error);
   });
-
-  router.push("/liveFeed");
+  router.push("/");
 };
 
 const register = async () => {
@@ -126,7 +124,7 @@ const requestToken = async (user) => {
   })
     .then(async (currentToken) => {
       if (currentToken) {
-        await fetch("/api/set_token", {
+        await fetch("http://localhost:3000/api/set_token", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -160,7 +158,7 @@ const togglePage = () => {
 };
 </script>
 
-<style>
+<style scoped>
 .page {
   width: 50%;
   max-width: 350px;
