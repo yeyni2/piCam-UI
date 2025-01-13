@@ -55,6 +55,7 @@
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { useRouter } from "vue-router";
 import { getAuth, signOut } from "firebase/auth";
+// import { useStore } from "../store/index";
 
 export default {
   name: "NavBar",
@@ -65,9 +66,16 @@ export default {
     const router = useRouter();
     const auth = getAuth();
 
+    const userData = JSON.parse(sessionStorage.getItem("userInfo"));
+
     const items = [
       { text: "Live Feeds", route: "/", icon: "mdi-camera" },
       { text: "Account", route: "/editAccount", icon: "mdi-account" },
+      {
+        text: "My Requests",
+        route: "/myRequests",
+        icon: "mdi-camera-lock-outline",
+      },
     ];
 
     const getHeader = computed(() => items);
@@ -78,7 +86,7 @@ export default {
     };
 
     const getText = (name) => {
-      return name; // Assuming no translation is needed, as "$t" isn't used in this example
+      return name;
     };
 
     const toggleMenu = () => {
@@ -102,7 +110,7 @@ export default {
     const logout = () => {
       signOut(auth)
         .then(() => {
-          router.push("/");
+          router.push("/login");
         })
         .catch((error) => {
           console.error("Logout failed: ", error);
@@ -112,6 +120,13 @@ export default {
     onMounted(() => {
       updateScreenWidth();
       window.addEventListener("resize", updateScreenWidth);
+      if (userData["admin_cams"].length > 0) {
+        items.push({
+          text: "Manage Cams",
+          route: "/camsManagment",
+          icon: "mdi-monitor-dashboard",
+        });
+      }
     });
 
     onBeforeUnmount(() => {
@@ -138,7 +153,6 @@ export default {
   background-color: black !important;
   display: flex;
   justify-content: space-between !important;
-  /* flex-wrap: wrap; */
   padding: 0.2rem 0.5rem;
   margin-bottom: 0.5rem !important;
   align-items: center;

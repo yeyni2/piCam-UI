@@ -25,7 +25,12 @@ module.exports = defineConfig({
     ],
     workboxPluginMode: "InjectManifest",
     workboxOptions: {
-    swSrc: "./public/firebase-messaging-sw.js",
+      swSrc: "./public/firebase-messaging-sw.js",
+    },
+  },
+  devServer: {
+    client: {
+      overlay: false,
     },
   },
 });

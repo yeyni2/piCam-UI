@@ -43,14 +43,13 @@
 </template>
 
 <script setup>
-import { auth } from "../JS/firebaseConfig.js";
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
 const accountInfo = ref({});
 const newImages = ref([]);
 
-const userIdToken = await auth.currentUser.getIdToken();
+const userIdToken = sessionStorage.getItem("userIdToken");
 
 const saveInfo = async () => {
   const formData = new FormData();
@@ -89,24 +88,9 @@ const saveInfo = async () => {
   }
 };
 
-const getUserData = async () => {
-  try {
-    const response = await fetch("http://localhost:3000/api/get_account_info", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userIdToken}`,
-      },
-    });
-    return response.json();
-  } catch (error) {
-    alert(error);
-  }
-};
-
 const deleteImage = async (index) => {
   try {
-    fetch("http://localhost:3000/api/delete_image", {
+    await fetch("http://localhost:3000/api/delete_image", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -123,7 +107,7 @@ const deleteImage = async (index) => {
 };
 
 onMounted(async () => {
-  accountInfo.value = await getUserData();
+  accountInfo.value = JSON.parse(sessionStorage.getItem("userInfo"));
 });
 </script>
 

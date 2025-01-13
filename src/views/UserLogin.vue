@@ -90,7 +90,7 @@ const register = async () => {
     password.value
   );
 
-  await fetch("api/add_new_user", {
+  await fetch("http://localhost:3000/api/add_new_user", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

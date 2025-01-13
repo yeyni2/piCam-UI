@@ -3,6 +3,8 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import LiveFeed from "../views/LiveFeed.vue";
 import Login from "../views/UserLogin.vue";
 import EditAccount from "../views/EditAccount.vue";
+import MyRequests from "../views/MyRequests.vue";
+import CamsManagment from "../views/AdminScreen.vue";
 
 const routes = [
   {
@@ -19,6 +21,16 @@ const routes = [
     path: "/editAccount",
     name: "editAccount",
     component: EditAccount,
+  },
+  {
+    path: "/myRequests",
+    name: "myRequests",
+    component: MyRequests,
+  },
+  {
+    path: "/camsManagment",
+    name: "camsManagment",
+    component: CamsManagment,
   },
 ];
 
