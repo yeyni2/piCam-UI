@@ -1,42 +1,32 @@
 <template>
   <div class="d-flex align-center justify-center">
     <div v-if="requests.length > 0">
-      <v-card
-        class="pa-7"
-        style="min-width: 300px"
+      <RequestsCard
         v-for="(request, index) in requests"
         :key="index"
-      >
-        <v-card-title class="mb-3">{{ request.cam }}</v-card-title>
-        <v-card-subtitle>Status: {{ request.status }}</v-card-subtitle>
-        <v-card-text>
-          <v-checkbox
-            v-for="(value, key) in request.options"
-            :key="key"
-            :model-value="value"
-            :label="key"
-            disabled
-          />
-          <div>Creation Date: {{ formatDate(request.timestamp) }}</div>
-        </v-card-text>
-      </v-card>
+        :request="request"
+        @remove-request="requests.splice(index, 1)"
+      />
     </div>
-    <div v-else style="font-size: 2rem; font-weight: 550">
+    <div v-else-if="!loading" style="font-size: 2rem; font-weight: 550">
       No Requests Found...
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onBeforeMount } from "vue";
+import RequestsCard from "../components/RequestsCard.vue";
 
 const requests = ref([]);
+const loading = ref(false);
 
 const userIdToken = sessionStorage.getItem("userIdToken");
 
-onMounted(async () => {
+onBeforeMount(async () => {
+  loading.value = true;
   requests.value = await getRequests();
-  console.log(requests.value);
+  loading.value = false;
 });
 
 const getRequests = async () => {
@@ -52,11 +42,5 @@ const getRequests = async () => {
   } catch (error) {
     alert(error);
   }
-};
-
-const formatDate = (timestamp) => {
-  const date = new Date(timestamp);
-  console.log(date);
-  return date.toLocaleDateString();
 };
 </script>

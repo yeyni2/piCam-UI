@@ -13,6 +13,16 @@
           </template>
         </v-checkbox>
       </div>
+      <v-textarea
+        class="mt-5"
+        v-model="comment"
+        label="leave a comment"
+        variant="solo-filled"
+        clearable
+        auto-grow
+        row-height="15"
+        rows="1"
+      ></v-textarea>
     </v-card-text>
     <v-btn @click="makeRquest">Send Request</v-btn>
     <v-dialog v-model="popupVisible">
@@ -35,6 +45,7 @@ import { ref, defineEmits } from "vue";
 const userIdToken = sessionStorage.getItem("userIdToken");
 
 const cameraName = ref("");
+const comment = ref("")
 
 const emit = defineEmits(["closePopup"]);
 
@@ -78,6 +89,7 @@ const makeRquest = async () => {
         camera: cameraName.value,
         options: checkboxValues.value,
         userIdToken: userIdToken,
+        sender_comment: comment.value
       }),
     });
     emit("closePopup");

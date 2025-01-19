@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onBeforeMount } from "vue";
 import axios from "axios";
 
 const accountInfo = ref({});
@@ -106,7 +106,7 @@ const deleteImage = async (index) => {
   }
 };
 
-onMounted(async () => {
+onBeforeMount(async () => {
   accountInfo.value = JSON.parse(sessionStorage.getItem("userInfo"));
 });
 </script>

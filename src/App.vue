@@ -13,7 +13,7 @@
 <script setup>
 import NavBar from "./components/NavBar.vue";
 import { useRoute } from "vue-router";
-import { computed, onMounted } from "vue";
+import { computed, onBeforeMount } from "vue";
 import { auth } from "./JS/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -24,6 +24,24 @@ const isLoginPage = computed(() => route.path === "/login");
 const saveUserInfo = async (user) => {
   if (user) {
     try {
+      const lastDataUpdate = sessionStorage.getItem("datetime");
+      const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+      let savedMail = undefined;
+
+      if (userInfo && "email" in userInfo) {
+        savedMail = userInfo["email"];
+      }
+      if (
+        lastDataUpdate &&
+        ((savedMail && savedMail == user.email) || !savedMail)
+      ) {
+        const differenceInHours =
+          (new Date() - new Date(lastDataUpdate)) / (1000 * 60 * 60);
+        if (differenceInHours < 1) {
+          return;
+        }
+      }
+
       const userIdToken = await user.getIdToken();
 
       const userData = await fetch(
@@ -39,18 +57,22 @@ const saveUserInfo = async (user) => {
 
       const userDataJson = await userData.json();
 
+      sessionStorage.setItem("datetime", new Date());
       sessionStorage.setItem("userIdToken", userIdToken);
       sessionStorage.setItem("userInfo", JSON.stringify(userDataJson));
+      window.dispatchEvent(new Event("authChange"));
     } catch (error) {
+      console.error(error);
       alert(error);
     }
   } else {
     sessionStorage.removeItem("userIdToken");
     sessionStorage.removeItem("userInfo");
+    sessionStorage.removeItem("datetime");
   }
 };
 
-onMounted(async () => {
+onBeforeMount(async () => {
   const currentUser = auth.currentUser;
   if (currentUser) {
     await saveUserInfo(currentUser);
@@ -72,6 +94,6 @@ onAuthStateChanged(auth, async (user) => {
 }
 
 .router {
-  margin-top: 100px !important;
+  margin-top: 80px !important;
 }
 </style>

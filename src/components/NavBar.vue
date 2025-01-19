@@ -55,7 +55,6 @@
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { useRouter } from "vue-router";
 import { getAuth, signOut } from "firebase/auth";
-// import { useStore } from "../store/index";
 
 export default {
   name: "NavBar",
@@ -65,8 +64,6 @@ export default {
     const showBtns = ref(false);
     const router = useRouter();
     const auth = getAuth();
-
-    const userData = JSON.parse(sessionStorage.getItem("userInfo"));
 
     const items = [
       { text: "Live Feeds", route: "/", icon: "mdi-camera" },
@@ -117,20 +114,33 @@ export default {
         });
     };
 
-    onMounted(() => {
-      updateScreenWidth();
-      window.addEventListener("resize", updateScreenWidth);
-      if (userData["admin_cams"].length > 0) {
+    const checkAdmin = () => {
+      const userData = JSON.parse(sessionStorage.getItem("userInfo"));
+      console.log("in check admin ", userData);
+
+      if (
+        userData &&
+        "admin_cams" in userData &&
+        userData["admin_cams"].length > 0
+      ) {
         items.push({
           text: "Manage Cams",
           route: "/camsManagment",
           icon: "mdi-monitor-dashboard",
         });
       }
+    };
+
+    onMounted(() => {
+      updateScreenWidth();
+      window.addEventListener("resize", updateScreenWidth);
+      window.addEventListener("authChange", checkAdmin);
+      checkAdmin();
     });
 
     onBeforeUnmount(() => {
       window.removeEventListener("resize", updateScreenWidth);
+      window.removeEventListener("authChange", checkAdmin);
     });
 
     return {
