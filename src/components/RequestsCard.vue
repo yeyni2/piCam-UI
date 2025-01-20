@@ -75,6 +75,7 @@
 
 <script setup>
 import { ref, computed, onMounted, defineEmits } from "vue";
+import { getSessionStorageData } from "../JS/utils";
 
 const emit = defineEmits(["remove-request"]);
 
@@ -82,7 +83,7 @@ const disableComment = ref("");
 const disabledLable = ref("");
 const admin_comment = ref("");
 
-const userIdToken = sessionStorage.getItem("userIdToken");
+const userIdToken = getSessionStorageData("userIdToken");
 
 const props = defineProps({
   request: {

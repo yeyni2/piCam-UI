@@ -18,11 +18,12 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
 import RequestsCard from "../components/RequestsCard.vue";
+import { getSessionStorageData } from "../JS/utils";
 
 const requests = ref([]);
 const loading = ref(false);
 
-const userIdToken = sessionStorage.getItem("userIdToken");
+const userIdToken = getSessionStorageData("userIdToken");
 
 onBeforeMount(async () => {
   loading.value = true;

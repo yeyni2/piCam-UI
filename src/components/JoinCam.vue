@@ -41,11 +41,12 @@
 
 <script setup>
 import { ref, defineEmits } from "vue";
+import { getSessionStorageData } from "../JS/utils";
 
-const userIdToken = sessionStorage.getItem("userIdToken");
+const userIdToken = getSessionStorageData("userIdToken");
 
 const cameraName = ref("");
-const comment = ref("")
+const comment = ref("");
 
 const emit = defineEmits(["closePopup"]);
 
@@ -89,7 +90,7 @@ const makeRquest = async () => {
         camera: cameraName.value,
         options: checkboxValues.value,
         userIdToken: userIdToken,
-        sender_comment: comment.value
+        sender_comment: comment.value,
       }),
     });
     emit("closePopup");

@@ -1,5 +1,5 @@
 <template>
-  <Suspense>
+  <Suspense v-if="!sessionStore.isLoading">
     <template #default>
       <router-view class="router" />
     </template>
@@ -12,75 +12,20 @@
 
 <script setup>
 import NavBar from "./components/NavBar.vue";
-import { useRoute } from "vue-router";
-import { computed, onBeforeMount } from "vue";
+import { ref } from "vue";
 import { auth } from "./JS/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import { saveUserInfo } from "./JS/utils";
+import { useSessionStorageStore } from "./store/index";
 
-const route = useRoute();
+const sessionStore = useSessionStorageStore();
 
-const isLoginPage = computed(() => route.path === "/login");
+const isLoginPage = ref(true);
 
-const saveUserInfo = async (user) => {
-  if (user) {
-    try {
-      const lastDataUpdate = sessionStorage.getItem("datetime");
-      const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
-      let savedMail = undefined;
-
-      if (userInfo && "email" in userInfo) {
-        savedMail = userInfo["email"];
-      }
-      if (
-        lastDataUpdate &&
-        ((savedMail && savedMail == user.email) || !savedMail)
-      ) {
-        const differenceInHours =
-          (new Date() - new Date(lastDataUpdate)) / (1000 * 60 * 60);
-        if (differenceInHours < 1) {
-          return;
-        }
-      }
-
-      const userIdToken = await user.getIdToken();
-
-      const userData = await fetch(
-        "http://localhost:3000/api/get_account_info",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userIdToken}`,
-          },
-        }
-      );
-
-      const userDataJson = await userData.json();
-
-      sessionStorage.setItem("datetime", new Date());
-      sessionStorage.setItem("userIdToken", userIdToken);
-      sessionStorage.setItem("userInfo", JSON.stringify(userDataJson));
-      window.dispatchEvent(new Event("authChange"));
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
-  } else {
-    sessionStorage.removeItem("userIdToken");
-    sessionStorage.removeItem("userInfo");
-    sessionStorage.removeItem("datetime");
-  }
-};
-
-onBeforeMount(async () => {
-  const currentUser = auth.currentUser;
-  if (currentUser) {
-    await saveUserInfo(currentUser);
-  }
-});
 
 onAuthStateChanged(auth, async (user) => {
   await saveUserInfo(user);
+  isLoginPage.value = false;
 });
 </script>
 

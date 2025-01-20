@@ -45,11 +45,12 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
 import axios from "axios";
+import { getSessionStorageData } from "../JS/utils";
 
 const accountInfo = ref({});
 const newImages = ref([]);
 
-const userIdToken = sessionStorage.getItem("userIdToken");
+const userIdToken = getSessionStorageData("userIdToken");
 
 const saveInfo = async () => {
   const formData = new FormData();
@@ -107,7 +108,7 @@ const deleteImage = async (index) => {
 };
 
 onBeforeMount(async () => {
-  accountInfo.value = JSON.parse(sessionStorage.getItem("userInfo"));
+  accountInfo.value = JSON.parse(getSessionStorageData("userInfo"));
 });
 </script>
 
