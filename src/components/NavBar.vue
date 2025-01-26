@@ -56,6 +56,7 @@ import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { useRouter } from "vue-router";
 import { getAuth, signOut } from "firebase/auth";
 import { getSessionStorageData } from "../JS/utils";
+import { useSessionStorageStore } from "../store/index";
 
 export default {
   name: "NavBar",
@@ -66,6 +67,9 @@ export default {
     const router = useRouter();
     const auth = getAuth();
     const isAdmin = ref(false);
+
+    const sessionStore = useSessionStorageStore();
+    let userData = null;
 
     const items = [
       { text: "Live Feeds", route: "/", icon: "mdi-camera" },
@@ -109,6 +113,7 @@ export default {
     const logout = () => {
       signOut(auth)
         .then(() => {
+          sessionStore.setIsLoginPage(true);
           router.push("/login");
         })
         .catch((error) => {
@@ -117,11 +122,11 @@ export default {
     };
 
     const checkAdmin = async () => {
-      const userData = await JSON.parse(getSessionStorageData("userInfo"));
+      console.log("well plated");
       if (
-        userData &&
-        "admin_cams" in userData &&
-        userData["admin_cams"].length > 0 &&
+        userData.value &&
+        "admin_cams" in userData.value &&
+        userData.value["admin_cams"].length > 0 &&
         !isAdmin.value
       ) {
         isAdmin.value = true;
@@ -133,10 +138,11 @@ export default {
       } else {
         isAdmin.value = false;
       }
-
     };
 
     onMounted(async () => {
+      console.log("navbar");
+      userData = await getSessionStorageData("userInfo");
       updateScreenWidth();
       window.addEventListener("resize", updateScreenWidth);
       window.addEventListener("sessionStorageChanged", () => {

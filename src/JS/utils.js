@@ -1,5 +1,6 @@
 import { auth } from "../JS/firebaseConfig";
 import { useSessionStorageStore } from "../store/index";
+import { storeToRefs } from "pinia";
 
 const minLengthRule = (minLength) => {
   return (value) => {
@@ -14,21 +15,23 @@ const requireRule = (v) => {
   return (v && v.trim() !== "") || "Must have a value";
 };
 
-const getSessionStorageData = (fieldName) => {
+const getSessionStorageData = async (fieldName) => {
+  const sessionStore = useSessionStorageStore();
+
   const currentUser = auth.currentUser;
 
   if (!currentUser) return undefined;
 
-  saveUserInfo(currentUser);
+  await saveUserInfo(currentUser);
 
-  return sessionStorage.getItem(fieldName);
+  return storeToRefs(sessionStore)[fieldName];
 };
 
-const saveUserInfo = async (user) => {
+const saveUserInfo = async (user, isAuthChange = false) => {
   const sessionStore = useSessionStorageStore();
   if (user) {
     try {
-      if (sessionStore.isLoading) {
+      if (sessionStore.isLoading && !isAuthChange) {
         return;
       }
       sessionStore.setIsLoading(true);
@@ -73,10 +76,13 @@ const saveUserInfo = async (user) => {
       sessionStorage.setItem("userIdToken", userIdToken);
       sessionStorage.setItem("userInfo", JSON.stringify(userDataJson));
 
-      window.dispatchEvent(new Event("sessionStorageChanged"));
       if (sessionStore) {
         sessionStore.setDatetime(sessionStorage.getItem("datetime"));
+        sessionStore.setUserInfo(userDataJson);
+        sessionStore.setUserIdToken(userIdToken);
       }
+      window.dispatchEvent(new Event("sessionStorageChanged"));
+      console.log("dispatch");
     } catch (error) {
       console.error(error);
       alert(error);
@@ -91,6 +97,8 @@ const saveUserInfo = async (user) => {
     sessionStorage.removeItem("datetime");
     if (sessionStore) {
       sessionStore.setDatetime(null);
+      sessionStore.setUserInfo(null);
+      sessionStore.setUserIdToken(null);
       sessionStore.setIsLoading(false);
     }
   }

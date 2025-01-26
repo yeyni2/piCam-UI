@@ -45,10 +45,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { useRouter } from "vue-router";
 import { ref } from "vue";
-
-const router = useRouter();
 
 const email = ref("");
 const password = ref("");
@@ -80,7 +77,6 @@ const login = async () => {
   await requestToken(user).catch((error) => {
     alert(error);
   });
-  router.push("/");
 };
 
 const register = async () => {

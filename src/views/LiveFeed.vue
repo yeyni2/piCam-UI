@@ -31,24 +31,27 @@ import { io } from "socket.io-client";
 import { onBeforeMount, onBeforeUnmount, ref } from "vue";
 import JoinCam from "../components/JoinCam.vue";
 import { getSessionStorageData } from "../JS/utils";
+import { confirmPasswordReset } from "firebase/auth";
 
 const videoUrl = ref("");
 const joinCamPopup = ref(false);
 const cams = ref([]);
 const openLiveFeed = ref(false);
-const userIdToken = getSessionStorageData("userIdToken");
+
+const userIdToken = await getSessionStorageData("userIdToken");
+const userInfo = await getSessionStorageData("userInfo");
 
 const socket = io("localhost:3000", {
   query: {
-    userIdToken,
+    userIdToken: userIdToken.value,
   },
 });
 
-socket.on("connect", () => {
-  if (cams.value.length == 1) {
-    socket.emit("video_feed", { cameras: cams.value[0], userIdToken });
-  }
-});
+// socket.on("connect", () => {
+//   if (cams.value.length == 1) {
+//     socket.emit("video_feed", { cameras: cams.value[0], userIdToken });
+//   }
+// });
 
 socket.on("disconnect", () => {
   socket.disconnect();
@@ -84,20 +87,26 @@ const handleUnloadPage = () => {
   }
 };
 
-const get_cams = () => {
-  const userInfo = JSON.parse(getSessionStorageData("userInfo"));
+const getCams = async () => {
+  if (userInfo.value && "cameras" in userInfo.value) {
+    cams.value = userInfo.value["cameras"];
+  }
 
-  if (userInfo && "cameras" in userInfo) {
-    cams.value = userInfo["cameras"];
+  if (cams.value.length == 1) {
+    socket.emit("video_feed", {
+      cameras: cams.value[0],
+      userIdToken: userIdToken.value,
+    });
   }
 };
 
-onBeforeMount(() => {
-  get_cams();
+onBeforeMount(async () => {
   if (!socket.connected) {
     socket.connect();
   }
+  getCams();
   window.addEventListener("beforeunload", handleUnloadPage);
+  window.addEventListener("sessionStorageChanged", getCams);
 });
 
 onBeforeUnmount(() => {
@@ -105,6 +114,7 @@ onBeforeUnmount(() => {
     socket.disconnect();
   }
   window.removeEventListener("beforeunload", handleUnloadPage);
+  window.removeEventListener("sessionStorageChanged", getCams);
 });
 </script>
 

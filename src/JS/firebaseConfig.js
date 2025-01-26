@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getMessaging, onMessage } from "firebase/messaging";
 
 const firebaseConfig = {
@@ -20,4 +20,10 @@ onMessage(messaging, (payload) => {
   console.log("Message received. ", payload);
 });
 
-export { auth, messaging };
+const getUserState = () => {
+  new Promise((resolve, reject) => {
+    onAuthStateChanged(getAuth(), resolve, reject);
+  });
+};
+
+export { auth, messaging, getUserState };

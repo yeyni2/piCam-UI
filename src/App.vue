@@ -7,25 +7,30 @@
       <div>Loading...</div>
     </template>
   </Suspense>
-  <NavBar v-if="!isLoginPage" />
+  <NavBar v-if="!sessionStore.isLoginPage" />
 </template>
 
 <script setup>
 import NavBar from "./components/NavBar.vue";
-import { ref } from "vue";
 import { auth } from "./JS/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { saveUserInfo } from "./JS/utils";
 import { useSessionStorageStore } from "./store/index";
+import { onBeforeMount } from "vue";
 
 const sessionStore = useSessionStorageStore();
 
-const isLoginPage = ref(true);
-
-
 onAuthStateChanged(auth, async (user) => {
-  await saveUserInfo(user);
-  isLoginPage.value = false;
+  await saveUserInfo(user, true);
+  if (user) {
+    sessionStore.setIsLoginPage(false);
+  }
+});
+
+onBeforeMount(() => {
+  sessionStore.setDatetime(sessionStorage.getItem("datetime"));
+  sessionStore.setUserIdToken(sessionStorage.getItem("userIdToken"));
+  sessionStore.setUserInfo(JSON.parse(sessionStorage.getItem("userInfo")));
 });
 </script>
 
@@ -39,6 +44,6 @@ onAuthStateChanged(auth, async (user) => {
 }
 
 .router {
-  margin-top: 80px !important;
+  margin-top: 100px !important;
 }
 </style>

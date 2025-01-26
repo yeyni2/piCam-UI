@@ -43,7 +43,7 @@
 import { ref, defineEmits } from "vue";
 import { getSessionStorageData } from "../JS/utils";
 
-const userIdToken = getSessionStorageData("userIdToken");
+const userIdToken = await getSessionStorageData("userIdToken");
 
 const cameraName = ref("");
 const comment = ref("");
@@ -89,7 +89,7 @@ const makeRquest = async () => {
       body: JSON.stringify({
         camera: cameraName.value,
         options: checkboxValues.value,
-        userIdToken: userIdToken,
+        userIdToken: userIdToken.value,
         sender_comment: comment.value,
       }),
     });

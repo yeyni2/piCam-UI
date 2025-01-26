@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-7" style="min-width: 350px">
+  <v-card class="pa-7 ma-5" style="min-width: 325px">
     <v-btn
       v-if="!isAdminRequest || request.concluded"
       style="position: absolute; top: 16px; right: 16px"
@@ -22,13 +22,15 @@
     </div>
 
     <v-card-text>
-      <v-checkbox
+      <div
         v-for="(value, key) in request.options"
         :key="key"
-        :model-value="value"
-        :label="key"
-        disabled
-      />
+        class="d-flex align-center my-3"
+        style="font-size: 1.1rem"
+      >
+        <input type="checkbox" checked disabled class="mx-3" />
+        <span>{{ key }}</span>
+      </div>
       <v-textarea
         v-if="disableComment"
         class="mt-5"
@@ -40,7 +42,7 @@
         rows="1"
         :disabled="true"
       ></v-textarea>
-      <div>Creation Date: {{ formatDate(request.timestamp) }}</div>
+      <div class="mt-6">Creation Date: {{ formatDate(request.timestamp) }}</div>
       <v-textarea
         v-if="!request.concluded && isAdminRequest"
         class="mt-5"
@@ -83,7 +85,7 @@ const disableComment = ref("");
 const disabledLable = ref("");
 const admin_comment = ref("");
 
-const userIdToken = getSessionStorageData("userIdToken");
+const userIdToken = await getSessionStorageData("userIdToken");
 
 const props = defineProps({
   request: {
@@ -107,7 +109,7 @@ const deleteCard = async () => {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${userIdToken}`,
+        Authorization: `Bearer ${userIdToken.value}`,
       },
       body: JSON.stringify({
         ...props.request,
@@ -126,7 +128,7 @@ const answer_request = async (verdict, request) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${userIdToken}`,
+        Authorization: `Bearer ${userIdToken.value}`,
       },
       body: JSON.stringify({
         ...props.request,

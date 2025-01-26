@@ -47,15 +47,15 @@ import { ref, onBeforeMount } from "vue";
 import axios from "axios";
 import { getSessionStorageData } from "../JS/utils";
 
-const accountInfo = ref({});
+const accountInfo = getSessionStorageData("userInfo");
 const newImages = ref([]);
 
-const userIdToken = getSessionStorageData("userIdToken");
+const userIdToken = await getSessionStorageData("userIdToken");
 
 const saveInfo = async () => {
   const formData = new FormData();
 
-  formData.append("userIdToken", userIdToken);
+  formData.append("userIdToken", userIdToken.value);
   formData.append("name", accountInfo.value.name);
 
   for (let i = 0; i < newImages.value.length; i++) {
@@ -98,7 +98,7 @@ const deleteImage = async (index) => {
       },
       body: JSON.stringify({
         imagePath: accountInfo.value.images[index].imagePath,
-        userIdToken: userIdToken,
+        userIdToken: userIdToken.value,
       }),
     });
     accountInfo.value.images.splice(index, 1);
@@ -106,10 +106,6 @@ const deleteImage = async (index) => {
     alert(error);
   }
 };
-
-onBeforeMount(async () => {
-  accountInfo.value = JSON.parse(getSessionStorageData("userInfo"));
-});
 </script>
 
 <style>

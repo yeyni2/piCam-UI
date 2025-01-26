@@ -1,6 +1,9 @@
 <template>
-  <div class="d-flex align-center justify-center">
-    <div v-if="requests.length > 0">
+  <div
+    class="d-flex align-center justify-center"
+    style="margin-top: 100px !important"
+  >
+    <div class="my-requests" v-if="requests.length > 0">
       <RequestsCard
         v-for="(request, index) in requests"
         :key="index"
@@ -22,7 +25,7 @@ import { getSessionStorageData } from "../JS/utils";
 const requests = ref([]);
 const loading = ref(false);
 
-const userIdToken = getSessionStorageData("userIdToken");
+const userIdToken = await getSessionStorageData("userIdToken");
 
 onBeforeMount(async () => {
   loading.value = true;
@@ -36,7 +39,7 @@ const getRequests = async () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${userIdToken}`,
+        Authorization: `Bearer ${userIdToken.value}`,
       },
     });
     return response.json();
@@ -45,3 +48,18 @@ const getRequests = async () => {
   }
 };
 </script>
+
+<style>
+.my-requests {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+@media screen and (max-width: 720px) {
+  .my-requests {
+    flex-direction: column;
+  }
+}
+</style>
