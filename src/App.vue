@@ -1,5 +1,5 @@
 <template>
-  <Suspense v-if="!sessionStore.isLoading">
+  <Suspense v-showS="!sessionStore.isLoading">
     <template #default>
       <router-view class="router" />
     </template>
@@ -21,7 +21,11 @@ import { onBeforeMount } from "vue";
 const sessionStore = useSessionStorageStore();
 
 onAuthStateChanged(auth, async (user) => {
-  await saveUserInfo(user, true);
+  if (!sessionStore.isRegistering) {
+    await saveUserInfo(user, true);
+  } else {
+    sessionStore.setIsRegistering(false);
+  }
   if (user) {
     sessionStore.setIsLoginPage(false);
   }

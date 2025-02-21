@@ -43,11 +43,11 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref } from "vue";
 import axios from "axios";
 import { getSessionStorageData } from "../JS/utils";
 
-const accountInfo = getSessionStorageData("userInfo");
+const accountInfo = await getSessionStorageData("userInfo");
 const newImages = ref([]);
 
 const userIdToken = await getSessionStorageData("userIdToken");
@@ -73,15 +73,16 @@ const saveInfo = async () => {
       }
     );
 
+    let new_images = response.data.uploadedImages
+      ? response.data.uploadedImages
+      : [];
+
     if (accountInfo.value.images) {
       accountInfo.value.images = [
-        ...new Set([
-          ...accountInfo.value.images,
-          ...response.data.uploadedImages,
-        ]),
+        ...new Set([...accountInfo.value.images, ...new_images]),
       ];
     } else {
-      accountInfo.value.images = response.data.uploadedImages;
+      accountInfo.value.images = new_images;
     }
     newImages.value = [];
   } catch (error) {

@@ -122,7 +122,6 @@ export default {
     };
 
     const checkAdmin = async () => {
-      console.log("well plated");
       if (
         userData.value &&
         "admin_cams" in userData.value &&

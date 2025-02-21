@@ -46,6 +46,11 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { ref } from "vue";
+import router from "@/router/index.js";
+import { saveUserInfo } from "../JS/utils.js";
+import { useSessionStorageStore } from "../store/index";
+
+const sessionStore = useSessionStorageStore();
 
 const email = ref("");
 const password = ref("");
@@ -77,9 +82,11 @@ const login = async () => {
   await requestToken(user).catch((error) => {
     alert(error);
   });
+  router.push("/");
 };
 
 const register = async () => {
+  sessionStore.setIsRegistering(true);
   let userCredential = await createUserWithEmailAndPassword(
     auth,
     email.value,
@@ -95,6 +102,8 @@ const register = async () => {
       userIdToken: await userCredential.user.getIdToken(true),
     }),
   });
+
+  await saveUserInfo(userCredential.user, true);
 
   return userCredential;
 };

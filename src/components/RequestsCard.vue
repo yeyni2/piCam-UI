@@ -59,7 +59,7 @@
       <v-btn
         :disabled="request.concluded"
         class="deny-btn"
-        @click="answer_request('denied', request)"
+        @click="answer_request('denied')"
       >
         deny
       </v-btn>
@@ -67,7 +67,7 @@
       <v-btn
         :disabled="request.concluded"
         class="approve-btn"
-        @click="answer_request('approved', request)"
+        @click="answer_request('approved')"
       >
         approve
       </v-btn>
@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, defineEmits } from "vue";
+import { ref, computed, onMounted, defineEmits, defineProps } from "vue";
 import { getSessionStorageData } from "../JS/utils";
 
 const emit = defineEmits(["remove-request"]);
@@ -101,6 +101,7 @@ const props = defineProps({
 const statusClass = computed(() => {
   if (props.request.status == "approved") return "approved-text";
   if (props.request.status == "denied") return "denied-text";
+  else return "";
 });
 
 const deleteCard = async () => {
@@ -115,14 +116,13 @@ const deleteCard = async () => {
         ...props.request,
       }),
     });
-    props.request = {};
     emit("remove-request");
   } catch (error) {
     alert(error);
   }
 };
 
-const answer_request = async (verdict, request) => {
+const answer_request = async (verdict) => {
   try {
     await fetch("http://localhost:3000/api/admin_request_answer", {
       method: "POST",
@@ -138,6 +138,7 @@ const answer_request = async (verdict, request) => {
         },
       }),
     });
+    emit("remove-request");
   } catch (error) {
     alert(error);
   }

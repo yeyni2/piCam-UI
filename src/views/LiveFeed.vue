@@ -6,7 +6,7 @@
         <v-btn @click="toggleJoinCamPopup" class="ma-5">Join A New Cam!</v-btn>
         <span v-if="cams.length == 0"> No Cams Found</span>
         <div v-else-if="cams.length > 1">
-          <div v-for="cam in cams" @click="startLiveFeed(cam)">
+          <div v-for="cam in cams" :key="cam" @click="startLiveFeed(cam)">
             See {{ cam }} Live Feed!
           </div>
         </div>
@@ -31,7 +31,6 @@ import { io } from "socket.io-client";
 import { onBeforeMount, onBeforeUnmount, ref } from "vue";
 import JoinCam from "../components/JoinCam.vue";
 import { getSessionStorageData } from "../JS/utils";
-import { confirmPasswordReset } from "firebase/auth";
 
 const videoUrl = ref("");
 const joinCamPopup = ref(false);

@@ -7,6 +7,7 @@ export const useSessionStorageStore = defineStore("sessionStorageStore", {
     userIdToken: null,
     isLoading: true,
     isLoginPage: true,
+    isRegistering: false,
   }),
   getters: {},
   actions: {
@@ -24,6 +25,9 @@ export const useSessionStorageStore = defineStore("sessionStorageStore", {
     },
     setIsLoginPage(newVal) {
       this.isLoginPage = newVal;
+    },
+    setIsRegistering(newVal) {
+      this.isRegistering = newVal;
     },
   },
 });
