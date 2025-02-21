@@ -30,7 +30,7 @@
 import { io } from "socket.io-client";
 import { onBeforeMount, onBeforeUnmount, ref } from "vue";
 import JoinCam from "../components/JoinCam.vue";
-import { getSessionStorageData } from "../JS/utils";
+import { getSessionStorageData, serverUrlBase } from "../JS/utils";
 
 const videoUrl = ref("");
 const joinCamPopup = ref(false);
@@ -40,17 +40,11 @@ const openLiveFeed = ref(false);
 const userIdToken = await getSessionStorageData("userIdToken");
 const userInfo = await getSessionStorageData("userInfo");
 
-const socket = io("localhost:3000", {
+const socket = io(serverUrlBase, {
   query: {
     userIdToken: userIdToken.value,
   },
 });
-
-// socket.on("connect", () => {
-//   if (cams.value.length == 1) {
-//     socket.emit("video_feed", { cameras: cams.value[0], userIdToken });
-//   }
-// });
 
 socket.on("disconnect", () => {
   socket.disconnect();

@@ -45,7 +45,7 @@
 <script setup>
 import { ref } from "vue";
 import axios from "axios";
-import { getSessionStorageData } from "../JS/utils";
+import { getSessionStorageData, serverUrlBase } from "../JS/utils";
 
 const accountInfo = await getSessionStorageData("userInfo");
 const newImages = ref([]);
@@ -64,7 +64,7 @@ const saveInfo = async () => {
 
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/edit_account_details",
+      serverUrlBase + "api/edit_account_details",
       formData,
       {
         headers: {
@@ -92,7 +92,7 @@ const saveInfo = async () => {
 
 const deleteImage = async (index) => {
   try {
-    await fetch("http://localhost:3000/api/delete_image", {
+    await fetch(serverUrlBase + "api/delete_image", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

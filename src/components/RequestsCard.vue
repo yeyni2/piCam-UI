@@ -77,7 +77,7 @@
 
 <script setup>
 import { ref, computed, onMounted, defineEmits, defineProps } from "vue";
-import { getSessionStorageData } from "../JS/utils";
+import { getSessionStorageData, serverUrlBase } from "../JS/utils";
 
 const emit = defineEmits(["remove-request"]);
 
@@ -106,7 +106,7 @@ const statusClass = computed(() => {
 
 const deleteCard = async () => {
   try {
-    await fetch("http://localhost:3000/api/delete_request", {
+    await fetch(serverUrlBase + "api/delete_request", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -124,7 +124,7 @@ const deleteCard = async () => {
 
 const answer_request = async (verdict) => {
   try {
-    await fetch("http://localhost:3000/api/admin_request_answer", {
+    await fetch(serverUrlBase + "api/admin_request_answer", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

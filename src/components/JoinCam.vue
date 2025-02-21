@@ -41,7 +41,7 @@
 
 <script setup>
 import { ref, defineEmits } from "vue";
-import { getSessionStorageData } from "../JS/utils";
+import { getSessionStorageData, serverUrlBase } from "../JS/utils";
 
 const userIdToken = await getSessionStorageData("userIdToken");
 
@@ -81,7 +81,7 @@ const descriptions = {
 
 const makeRquest = async () => {
   try {
-    await fetch("http://localhost:3000/api/join_cam_request", {
+    await fetch(serverUrlBase + "/api/join_cam_request", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

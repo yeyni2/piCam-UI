@@ -2,8 +2,8 @@ import { auth } from "../JS/firebaseConfig";
 import { useSessionStorageStore } from "../store/index";
 import { storeToRefs } from "pinia";
 
-// const serverUrlBase = "/"
 const serverUrlBase = "/";
+// const serverUrlBase = "http://localhost:3000/";
 
 const minLengthRule = (minLength) => {
   return (value) => {
@@ -62,16 +62,13 @@ const saveUserInfo = async (user, isAuthChange = false) => {
 
       const userIdToken = await user.getIdToken();
 
-      const userData = await fetch(
-        "http://localhost:3000/api/get_account_info",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userIdToken}`,
-          },
-        }
-      );
+      const userData = await fetch(serverUrlBase + "api/get_account_info", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userIdToken}`,
+        },
+      });
 
       const userDataJson = await userData.json();
 
@@ -107,4 +104,10 @@ const saveUserInfo = async (user, isAuthChange = false) => {
   }
 };
 
-export { getSessionStorageData, saveUserInfo, requireRule, minLengthRule };
+export {
+  getSessionStorageData,
+  saveUserInfo,
+  requireRule,
+  minLengthRule,
+  serverUrlBase,
+};

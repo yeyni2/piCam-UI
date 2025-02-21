@@ -47,7 +47,7 @@ import {
 } from "firebase/auth";
 import { ref } from "vue";
 import router from "@/router/index.js";
-import { saveUserInfo } from "../JS/utils.js";
+import { saveUserInfo, serverUrlBase } from "../JS/utils.js";
 import { useSessionStorageStore } from "../store/index";
 
 const sessionStore = useSessionStorageStore();
@@ -93,7 +93,7 @@ const register = async () => {
     password.value
   );
 
-  await fetch("http://localhost:3000/api/add_new_user", {
+  await fetch(serverUrlBase + "api/add_new_user", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -129,7 +129,7 @@ const requestToken = async (user) => {
   })
     .then(async (currentToken) => {
       if (currentToken) {
-        await fetch("http://localhost:3000/api/set_token", {
+        await fetch(serverUrlBase + "api/set_token", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

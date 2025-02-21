@@ -20,7 +20,7 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
 import RequestsCard from "../components/RequestsCard.vue";
-import { getSessionStorageData } from "../JS/utils";
+import { getSessionStorageData, serverUrlBase } from "../JS/utils";
 
 const requests = ref([]);
 const loading = ref(false);
@@ -35,7 +35,7 @@ onBeforeMount(async () => {
 
 const getRequests = async () => {
   try {
-    const response = await fetch("http://localhost:3000/api/get_my_requests", {
+    const response = await fetch(serverUrlBase + "api/get_my_requests", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
