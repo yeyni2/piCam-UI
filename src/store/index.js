@@ -7,7 +7,7 @@ export const useSessionStorageStore = defineStore("sessionStorageStore", {
     userIdToken: null,
     isLoading: true,
     isLoginPage: true,
-    isRegistering: false,
+    isRegistering: true,
   }),
   getters: {},
   actions: {

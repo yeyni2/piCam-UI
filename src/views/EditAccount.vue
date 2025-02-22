@@ -27,7 +27,7 @@
       <v-btn @click="saveInfo" size="x-large">save</v-btn>
     </v-form>
     <h2 class="mb-12">Face recognition images</h2>
-    <div class="images-container">
+    <div class="images-container" v-if="accountInfo && 'images' in accountInfo">
       <div
         v-for="(image, index) in accountInfo.images"
         :key="image.imagePath"
@@ -45,7 +45,12 @@
 <script setup>
 import { ref } from "vue";
 import axios from "axios";
-import { getSessionStorageData, serverUrlBase } from "../JS/utils";
+import {
+  getSessionStorageData,
+  serverUrlBase,
+  saveUserInfo,
+} from "../JS/utils";
+import { auth } from "../JS/firebaseConfig";
 
 const accountInfo = await getSessionStorageData("userInfo");
 const newImages = ref([]);
@@ -85,6 +90,7 @@ const saveInfo = async () => {
       accountInfo.value.images = new_images;
     }
     newImages.value = [];
+    saveUserInfo(auth.currentUser, false, true);
   } catch (error) {
     alert(error);
   }

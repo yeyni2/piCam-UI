@@ -28,6 +28,7 @@
         class="d-flex align-center my-3"
         style="font-size: 1.1rem"
       >
+        <!-- <input v-if="" type="checkbox" checked disabled class="mx-3" /> -->
         <input type="checkbox" checked disabled class="mx-3" />
         <span>{{ key }}</span>
       </div>

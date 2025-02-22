@@ -22,9 +22,7 @@ const sessionStore = useSessionStorageStore();
 
 onAuthStateChanged(auth, async (user) => {
   if (!sessionStore.isRegistering) {
-    await saveUserInfo(user, true);
-  } else {
-    sessionStore.setIsRegistering(false);
+      ]    await saveUserInfo(user, true);
   }
   if (user) {
     sessionStore.setIsLoginPage(false);

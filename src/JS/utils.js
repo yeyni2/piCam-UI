@@ -2,8 +2,8 @@ import { auth } from "../JS/firebaseConfig";
 import { useSessionStorageStore } from "../store/index";
 import { storeToRefs } from "pinia";
 
-const serverUrlBase = "/";
-// const serverUrlBase = "http://localhost:3000/";
+// const serverUrlBase = "/";
+const serverUrlBase = "http://localhost:3000/";
 
 const minLengthRule = (minLength) => {
   return (value) => {
@@ -30,7 +30,11 @@ const getSessionStorageData = async (fieldName) => {
   return storeToRefs(sessionStore)[fieldName];
 };
 
-const saveUserInfo = async (user, isAuthChange = false) => {
+const saveUserInfo = async (
+  user = auth.currentUser,
+  isAuthChange = false,
+  fourceUpdate = false
+) => {
   const sessionStore = useSessionStorageStore();
   if (user) {
     try {
@@ -38,25 +42,26 @@ const saveUserInfo = async (user, isAuthChange = false) => {
         return;
       }
       sessionStore.setIsLoading(true);
+      if (!fourceUpdate) {
+        const lastDataUpdate =
+          sessionStore && sessionStore.datetime
+            ? sessionStore.datetime
+            : sessionStorage.getItem("datetime");
+        const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+        let savedMail = undefined;
 
-      const lastDataUpdate =
-        sessionStore && sessionStore.datetime
-          ? sessionStore.datetime
-          : sessionStorage.getItem("datetime");
-      const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
-      let savedMail = undefined;
-
-      if (userInfo && "email" in userInfo) {
-        savedMail = userInfo["email"];
-      }
-      if (
-        lastDataUpdate &&
-        ((savedMail && savedMail == user.email) || !savedMail)
-      ) {
-        const differenceInHours =
-          (new Date() - new Date(lastDataUpdate)) / (1000 * 60 * 60);
-        if (differenceInHours < 1) {
-          return;
+        if (userInfo && "email" in userInfo) {
+          savedMail = userInfo["email"];
+        }
+        if (
+          lastDataUpdate &&
+          ((savedMail && savedMail == user.email) || !savedMail)
+        ) {
+          const differenceInHours =
+            (new Date() - new Date(lastDataUpdate)) / (1000 * 60 * 60);
+          if (differenceInHours < 1) {
+            return;
+          }
         }
       }
 
@@ -70,8 +75,11 @@ const saveUserInfo = async (user, isAuthChange = false) => {
         },
       });
 
-      const userDataJson = await userData.json();
+      if (!userData.ok) {
+        return;
+      }
 
+      const userDataJson = await userData.json();
       sessionStorage.setItem("datetime", new Date());
       sessionStorage.setItem("userIdToken", userIdToken);
       sessionStorage.setItem("userInfo", JSON.stringify(userDataJson));
@@ -96,7 +104,7 @@ const saveUserInfo = async (user, isAuthChange = false) => {
     sessionStorage.removeItem("datetime");
     if (sessionStore) {
       sessionStore.setDatetime(null);
-      sessionStore.setUserInfo(null);
+      sessionStore.setUserInfo({});
       sessionStore.setUserIdToken(null);
       sessionStore.setIsLoading(false);
     }

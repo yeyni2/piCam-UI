@@ -102,8 +102,9 @@ const register = async () => {
       userIdToken: await userCredential.user.getIdToken(true),
     }),
   });
-
-  await saveUserInfo(userCredential.user, true);
+  
+  await saveUserInfo(userCredential.user, false, true);
+  sessionStore.setIsRegistering(false);
 
   return userCredential;
 };
