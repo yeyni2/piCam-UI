@@ -81,7 +81,7 @@ const descriptions = {
 
 const makeRquest = async () => {
   try {
-    await fetch(serverUrlBase + "/api/join_cam_request", {
+    await fetch(serverUrlBase + "api/join_cam_request", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

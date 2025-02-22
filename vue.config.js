@@ -1,6 +1,7 @@
 const { defineConfig } = require("@vue/cli-service");
 module.exports = defineConfig({
   transpileDependencies: true,
+  outputDir: "vueapp",
   pwa: {
     name: "picam",
     short_name: "picam",
@@ -26,6 +27,7 @@ module.exports = defineConfig({
     workboxPluginMode: "InjectManifest",
     workboxOptions: {
       swSrc: "./public/firebase-messaging-sw.js",
+      // swDest: "service-worker.js",
     },
   },
   devServer: {

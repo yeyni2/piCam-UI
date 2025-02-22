@@ -140,7 +140,6 @@ export default {
     };
 
     onMounted(async () => {
-      console.log("navbar");
       userData = await getSessionStorageData("userInfo");
       updateScreenWidth();
       window.addEventListener("resize", updateScreenWidth);

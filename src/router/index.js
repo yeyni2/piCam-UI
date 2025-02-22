@@ -42,11 +42,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
-    console.log("into in listener");
-    console.log("go to ", to.path);
-    console.log(from.path);
-    console.log("is user ", user);
-
     if (!user) {
       if (to.path != "/login") {
         next("/login");

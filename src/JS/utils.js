@@ -82,7 +82,6 @@ const saveUserInfo = async (user, isAuthChange = false) => {
         sessionStore.setUserIdToken(userIdToken);
       }
       window.dispatchEvent(new Event("sessionStorageChanged"));
-      console.log("dispatch");
     } catch (error) {
       console.error(error);
       alert(error);
