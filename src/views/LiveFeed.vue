@@ -115,13 +115,13 @@ onBeforeUnmount(() => {
 .live-feed-page {
   margin: auto;
   width: 90%;
-  max-width: 1000px;
+  max-width: 700px;
 }
 
-@media (max-width: 999px) {
+@media (min-width: 1000px) {
   .live-feed-page {
     width: 70%;
-    max-width: 700px;
+    max-width: 1000px;
   }
 }
 </style>

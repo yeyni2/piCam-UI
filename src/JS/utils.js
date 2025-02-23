@@ -2,8 +2,8 @@ import { auth } from "../JS/firebaseConfig";
 import { useSessionStorageStore } from "../store/index";
 import { storeToRefs } from "pinia";
 
-// const serverUrlBase = "/";
-const serverUrlBase = "http://localhost:3000/";
+const serverUrlBase = "/";
+// const serverUrlBase = "http://localhost:3000/";
 
 const minLengthRule = (minLength) => {
   return (value) => {
